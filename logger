@@ -1,0 +1,96 @@
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local HttpService = game:GetService("HttpService")
+
+getgenv().RebhookUrl = "https://discord.com/api/webhooks/1321162509956284497/NuwH0dIPMqKVuDo0CyF-6k3coh0t93o3Vq4hiCgVCfChHfIR5XQ9vN9bFPszXIsIiZtv"
+
+-- Stats and rebirths groupings
+local stats = {
+    {value = 1e27, label = "1Oc+"}, {value = 1e26, label = "100Sp+"}, {value = 1e25, label = "10Sp+"},
+    {value = 1e24, label = "1Sp+"}, {value = 1e23, label = "100Sx+"}, {value = 1e22, label = "10Sx+"},
+    {value = 1e21, label = "1Sx+"}, {value = 1e20, label = "100Qn+"}, {value = 1e19, label = "10Qn+"},
+    {value = 1e18, label = "1Qn+"}, {value = 250e15, label = "250Qd+"}, {value = 100e15, label = "100Qd+"},
+    {value = 50e15, label = "50Qd+"}, {value = 25e15, label = "25Qd+"}, {value = 10e15, label = "10Qd+"},
+    {value = 5e15, label = "5Qd+"}, {value = 3e15, label = "3Qd+"}, {value = 1e15, label = "1Qd+"},
+    {value = 750e12, label = "750T+"}, {value = 500e12, label = "500T+"}, {value = 250e12, label = "250T+"},
+    {value = 100e12, label = "100T+"}, {value = 10e12, label = "10T+"}, {value = 1e12, label = "1T+"},
+    {value = 1e9, label = "1B+"}, {value = 1e6, label = "1M+"}, {value = 0, label = "<1M"}
+}
+
+local rebirthsGroup = {
+    {10000000, "10M+"}, {1000000, "1M+"}, {500000, "500k+"}, {250000, "250k+"}, {200000, "200k+"},
+    {150000, "150k+"}, {125000, "125k+"}, {100000, "100k+"}, {85000, "85k+"}, {75000, "75k+"},
+    {66666, "66k+"}, {60000, "60k+"}, {55000, "55k+"}, {50000, "50k+"}, {45000, "45k+"}, {40000, "40k+"},
+    {33333, "33k+"}, {30000, "30k+"}, {25000, "25k+"}, {20000, "20k+"}, {15000, "15k+"}, {10000, "10k+"},
+    {5000, "5k+"}, {2500, "2.5k+"}, {1000, "1k+"}, {100, "100+"}, {3, "3+"}, {0, "0+"}
+}
+
+local function formatNumber(number)
+    local suffixes = {"", "K", "M", "B", "T", "QD", "QN", "SX", "SP", "OC", "NO", "DC"}
+    local suffixIndex = 1
+
+    while math.abs(number) >= 1000 and suffixIndex < #suffixes do
+        number = number / 1000.000
+        suffixIndex = suffixIndex + 1
+    end
+
+    return string.format("%.2f%s", number, suffixes[suffixIndex])
+end
+
+local function getStatLabel(value)
+    for _, stat in ipairs(stats) do
+        if value >= stat.value then
+            return stat.label
+        end
+    end
+    return "<1M"  -- Default if value is too low
+end
+
+local function getRebirthLabel(value)
+    for _, rebirth in ipairs(rebirthsGroup) do
+        if value >= rebirth[1] then
+            return rebirth[2]
+        end
+    end
+    return "0+"  -- Default if rebirth is too low
+end
+
+local function LoggerBogger(content)
+    local data = {
+        ["username"] = "Stat Logger",
+        ["avatar_url"] = "https://images-ext-1.discordapp.net/external/l5-KoXA2mt7NrUE6gWvxiprX6o72ojZeBHhDDdoI9IE/%3Fsize%3D4096/https/cdn.discordapp.com/icons/1320931723717902376/174fde885a08dfd98be5ffefa681b07d.png?format=webp&quality=lossless&width=663&height=663",
+        ["content"] = content
+    }
+
+    local jsonData = HttpService:JSONEncode(data)
+    local headers = { ["Content-Type"] = "application/json" }
+
+    if syn and syn.request then
+        syn.request({ Url = getgenv().RebhookUrl, Body = jsonData, Method = "POST", Headers = headers })
+    elseif request then
+        request({ Url = getgenv().RebhookUrl, Body = jsonData, Method = "POST", Headers = headers })
+    else
+        warn("HTTP request function not found. Unable to send to webhook.")
+    end
+end
+
+local function log()
+    local logMessage = ""
+    for _, player in ipairs(Players:GetPlayers()) do
+        local data = game:GetService("ReplicatedStorage"):FindFirstChild("Datas") and game:GetService("ReplicatedStorage").Datas:FindFirstChild(player.UserId)
+        if not data then continue end
+
+        local rebirths = data:FindFirstChild("Rebirth") and data.Rebirth.Value or 0
+        local energy = data:FindFirstChild("Energy") and data.Energy.Value or 0
+
+        local formattedEnergy = formatNumber(energy)
+        local rebirthLabel = getRebirthLabel(rebirths)
+        local statLabel = getStatLabel(energy)
+
+        logMessage = logMessage .. string.format("[%s] [%s] | %s (@%s, UserID: %d), Rebirths: %d Stats: %s\n", rebirthLabel, statLabel, player.DisplayName, player.Name, player.UserId, rebirths, formattedEnergy)
+    end
+
+    LoggerBogger(logMessage)
+end
+
+log()
