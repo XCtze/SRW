@@ -2,7 +2,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
 
-getgenv().RebhookUrl = "https://discord.com/api/webhooks/1321162509956284497/NuwH0dIPMqKVuDo0CyF-6k3coh0t93o3Vq4hiCgVCfChHfIR5XQ9vN9bFPszXIsIiZtv"
+getgenv().logs = "https://discord.com/api/webhooks/1321162509956284497/NuwH0dIPMqKVuDo0CyF-6k3coh0t93o3Vq4hiCgVCfChHfIR5XQ9vN9bFPszXIsIiZtv"
 
 -- Stats and rebirths groupings
 local stats = {
@@ -95,7 +95,7 @@ local function log()
         end
         
         -- Always send to general webhook
-        sendWebhook(getgenv().RebhookUrl, player)
+        sendWebhook(getgenv().logsUrl, player)
     end
 end
 
