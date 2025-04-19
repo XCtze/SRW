@@ -6,7 +6,6 @@ while not lplr.Character do wait() end
 local ldata = game.ReplicatedStorage:WaitForChild("Datas"):WaitForChild(lplr.UserId)
 
 -- Now that the player is fully loaded, we can proceed with UI creation
-
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "LetterBGui"
 screenGui.ResetOnSpawn = false
@@ -52,16 +51,13 @@ corner.Parent = button
 
 -- Teleportation logic
 button.MouseButton1Click:Connect(function()
-    local teleportPlaceId = 5151400895 -- Target PlaceId for teleportation
     local currentPlaceId = game.PlaceId
 
-    -- Only teleport if the player is not already in the target place
-    if currentPlaceId ~= teleportPlaceId then
-        -- Teleport player to the target place
-        game:GetService("TeleportService"):Teleport(teleportPlaceId, lplr)
-    else
-        -- Teleport to the other place if the current place is 5151400895
-        local fallbackPlaceId = 3311165597 -- The other place to teleport to
-        game:GetService("TeleportService"):Teleport(fallbackPlaceId, lplr)
+    if currentPlaceId == 5151400895 then
+        -- If the player is in PlaceId 5151400895, teleport them to PlaceId 3311165597
+        game:GetService("TeleportService"):Teleport(3311165597, lplr)
+    elseif currentPlaceId == 3311165597 then
+        -- If the player is in PlaceId 3311165597, teleport them to PlaceId 5151400895
+        game:GetService("TeleportService"):Teleport(5151400895, lplr)
     end
 end)
