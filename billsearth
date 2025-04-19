@@ -1,14 +1,17 @@
--- Wait until the player is fully loaded
-game.Players.LocalPlayer.CharacterAdded:Wait()
+-- Wait until the game and player are fully loaded
+while not game:IsLoaded() do wait() end
+while not game.Players.LocalPlayer do wait() end
+local lplr = game.Players.LocalPlayer
+while not lplr.Character do wait() end
+local ldata = game.ReplicatedStorage:WaitForChild("Datas"):WaitForChild(lplr.UserId)
 
--- Ensure PlayerGui is ready before proceeding
-local playerGui = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+-- Now that the player is fully loaded, we can proceed with UI creation
 
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "LetterBGui"
 screenGui.ResetOnSpawn = false
 screenGui.IgnoreGuiInset = true
-screenGui.Parent = playerGui
+screenGui.Parent = lplr:WaitForChild("PlayerGui")
 
 -- Create the Frame
 local frame = Instance.new("Frame")
@@ -52,5 +55,5 @@ button.MouseButton1Click:Connect(function()
     local teleportPlaceId = 5151400895 -- Change this to your target PlaceId for teleportation
 
     -- Teleport player to the target place
-    game:GetService("TeleportService"):Teleport(teleportPlaceId, game.Players.LocalPlayer)
+    game:GetService("TeleportService"):Teleport(teleportPlaceId, lplr)
 end)
