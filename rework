@@ -175,6 +175,68 @@ for _, player in ipairs(Players:GetPlayers()) do
     createBillboard(player)
 end
 
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "LetterBGui"
+screenGui.ResetOnSpawn = false
+screenGui.IgnoreGuiInset = true -- ✨ Prevent GUI from being pushed down on mobile
+screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+
+-- Create the Frame
+local frame = Instance.new("Frame")
+frame.Name = "TransparentFrame"
+frame.Size = UDim2.new(0, 44, 0, 44) -- Square shape: width = height
+frame.AnchorPoint = Vector2.new(1, 0)
+frame.Position = UDim2.new(1, -12, 0, 12)
+frame.BackgroundTransparency = 1
+frame.Parent = screenGui
+
+-- Create the TextButton
+local button = Instance.new("TextButton")
+button.Name = "CyanBButton"
+button.Size = UDim2.new(1, 0, 1, 0)
+button.Position = UDim2.new(0, 0, 0, 0)
+button.BackgroundTransparency = 0.7 -- Semi-transparent background
+button.BackgroundColor3 = Color3.fromRGB(0, 0, 0) -- Optional: dark bg so cyan text pops
+button.Text = "B"
+button.TextColor3 = Color3.fromRGB(0, 255, 255) -- Cyan
+button.Font = Enum.Font.SourceSansBold
+button.TextScaled = true
+button.Parent = frame
+
+-- Set button text based on PlaceId
+local placeId = game.PlaceId
+if placeId == 3311165597 then
+    button.Text = "B"
+elseif placeId == 5151400895 then
+    button.Text = "E"
+else
+    button.Text = "?" -- optional: fallback for unknown places
+end
+
+
+-- Add a UICorner for rounded edges
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(0, 8) -- Adjust for roundness
+corner.Parent = button
+
+
+local TeleportService = game:GetService("TeleportService")
+
+button.MouseButton1Click:Connect(function()
+    local currentId = game.PlaceId
+    local targetId
+
+    if currentId == 3311165597 then
+        targetId = 5151400895
+    elseif currentId == 5151400895 then
+        targetId = 3311165597
+    end
+
+    if targetId then
+        TeleportService:Teleport(targetId, game.Players.LocalPlayer)
+    end
+end)
+
 local function execLog()
     local Players = game:GetService("Players")
     local ReplicatedStorage = game:GetService("ReplicatedStorage")
