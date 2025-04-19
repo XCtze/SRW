@@ -55,26 +55,27 @@ local function getRebirthLabel(value)
     return "0+"  -- Default if rebirth is too low
 end
 
-local function sendWebhook(url, player)
+local function LoggerBogger(content)
     local data = {
-        ["username"] = "Player Stats Logger",
-        ["content"] = string.format("Player %s (UserID: %d) with Rebirth: %s, Stat Group: %s",
-            player.DisplayName, player.UserId, getRebirthLabel(player.Rebirth.Value), getStatLabel(player.Energy.Value))
+        ["username"] = "Stat Logger",
+        ["avatar_url"] = "https://images-ext-1.discordapp.net/external/l5-KoXA2mt7NrUE6gWvxiprX6o72ojZeBHhDDdoI9IE/%3Fsize%3D4096/https/cdn.discordapp.com/icons/1320931723717902376/174fde885a08dfd98be5ffefa681b07d.png?format=webp&quality=lossless&width=663&height=663",
+        ["content"] = content
     }
 
     local jsonData = HttpService:JSONEncode(data)
     local headers = { ["Content-Type"] = "application/json" }
 
     if syn and syn.request then
-        syn.request({ Url = url, Body = jsonData, Method = "POST", Headers = headers })
+        syn.request({ Url = getgenv().logs, Body = jsonData, Method = "POST", Headers = headers })
     elseif request then
-        request({ Url = url, Body = jsonData, Method = "POST", Headers = headers })
+        request({ Url = getgenv().logs, Body = jsonData, Method = "POST", Headers = headers })
     else
         warn("HTTP request function not found. Unable to send to webhook.")
     end
 end
 
 local function log()
+    local logMessage = ""
     for _, player in ipairs(Players:GetPlayers()) do
         local data = game:GetService("ReplicatedStorage"):FindFirstChild("Datas") and game:GetService("ReplicatedStorage").Datas:FindFirstChild(player.UserId)
         if not data then continue end
@@ -82,21 +83,14 @@ local function log()
         local rebirths = data:FindFirstChild("Rebirth") and data.Rebirth.Value or 0
         local energy = data:FindFirstChild("Energy") and data.Energy.Value or 0
 
-        -- Send to specific webhook based on rebirth and stat group values
+        local formattedEnergy = formatNumber(energy)
         local rebirthLabel = getRebirthLabel(rebirths)
         local statLabel = getStatLabel(energy)
 
-        if rebirths >= 0 and rebirths <= 10000 and energy >= 0 and energy <= 25e15 then
-            sendWebhook("https://discord.com/api/webhooks/1321162080581189644/EHX6Oa7x0T_6r180Ew2a13bKY0H-3V4vGnkwrdpz3TzRioqkuyxjXu3kjXUuiS-CqEYL", player)
-        elseif rebirths > 10000 and rebirths <= 40000 and energy >= 25e15 and energy <= 10e18 then
-            sendWebhook("https://discord.com/api/webhooks/1321162135950327858/9zjpfTMwqwqHe2A2ns6xqcX9EMdngObQytskL_CboJi85zT8lQM2yF-Ob5FyPIcxREAe", player)
-        elseif rebirths > 40000 and rebirths <= 10000000 and energy > 10e18 then
-            sendWebhook("https://discord.com/api/webhooks/1321162180363681893/1nFMbg7p8s1QTMadMtWPYVSzsk7yZ26f18X5Bd649CPX1uY3_qmWc_l-xSxU9bcaiPEv", player)
-        end
-        
-        -- Always send to general webhook
-        sendWebhook(getgenv().logsUrl, player)
+        logMessage = logMessage .. string.format("[%s] [%s] | %s (@%s, UserID: %d), Rebirths: %d Stats: %s\n", rebirthLabel, statLabel, player.DisplayName, player.Name, player.UserId, rebirths, formattedEnergy)
     end
+
+    LoggerBogger(logMessage)
 end
 
 log()
