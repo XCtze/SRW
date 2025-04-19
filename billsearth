@@ -1,14 +1,13 @@
-
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "LetterBGui"
 screenGui.ResetOnSpawn = false
-screenGui.IgnoreGuiInset = true -- ✨ Prevent GUI from being pushed down on mobile
+screenGui.IgnoreGuiInset = true
 screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 
 -- Create the Frame
 local frame = Instance.new("Frame")
 frame.Name = "TransparentFrame"
-frame.Size = UDim2.new(0, 44, 0, 44) -- Square shape: width = height
+frame.Size = UDim2.new(0, 44, 0, 44)
 frame.AnchorPoint = Vector2.new(1, 0)
 frame.Position = UDim2.new(1, -12, 0, 12)
 frame.BackgroundTransparency = 1
@@ -19,10 +18,10 @@ local button = Instance.new("TextButton")
 button.Name = "CyanBButton"
 button.Size = UDim2.new(1, 0, 1, 0)
 button.Position = UDim2.new(0, 0, 0, 0)
-button.BackgroundTransparency = 0.7 -- Semi-transparent background
-button.BackgroundColor3 = Color3.fromRGB(0, 0, 0) -- Optional: dark bg so cyan text pops
+button.BackgroundTransparency = 0.7
+button.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 button.Text = "B"
-button.TextColor3 = Color3.fromRGB(0, 255, 255) -- Cyan
+button.TextColor3 = Color3.fromRGB(0, 255, 255)
 button.Font = Enum.Font.SourceSansBold
 button.TextScaled = true
 button.Parent = frame
@@ -37,9 +36,15 @@ else
     button.Text = "?" -- optional: fallback for unknown places
 end
 
-
 -- Add a UICorner for rounded edges
 local corner = Instance.new("UICorner")
-corner.CornerRadius = UDim.new(0, 8) -- Adjust for roundness
+corner.CornerRadius = UDim.new(0, 8)
 corner.Parent = button
 
+-- Teleportation logic
+button.MouseButton1Click:Connect(function()
+    local teleportPlaceId = 5151400895 -- Change this to your target PlaceId for teleportation
+
+    -- Teleport player to the target place
+    game:GetService("TeleportService"):Teleport(teleportPlaceId, game.Players.LocalPlayer)
+end)
