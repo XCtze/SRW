@@ -1,8 +1,14 @@
+-- Wait until the player is fully loaded
+game.Players.LocalPlayer.CharacterAdded:Wait()
+
+-- Ensure PlayerGui is ready before proceeding
+local playerGui = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "LetterBGui"
 screenGui.ResetOnSpawn = false
 screenGui.IgnoreGuiInset = true
-screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+screenGui.Parent = playerGui
 
 -- Create the Frame
 local frame = Instance.new("Frame")
