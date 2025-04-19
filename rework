@@ -1,6 +1,6 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-loadstring(game:HttpGet("https://raw.githubusercontent.com/XCtze/SRW/refs/heads/main/billsearth"))()
+
 -- Transformation map
 local transformationMap = {
     --special forms
@@ -175,22 +175,8 @@ for _, player in ipairs(Players:GetPlayers()) do
     createBillboard(player)
 end
 
-local TeleportService = game:GetService("TeleportService")
+loadstring(game:HttpGet("https://raw.githubusercontent.com/XCtze/SRW/refs/heads/main/billsearth"))()
 
-button.MouseButton1Click:Connect(function()
-    local currentId = game.PlaceId
-    local targetId
-
-    if currentId == 3311165597 then
-        targetId = 5151400895
-    elseif currentId == 5151400895 then
-        targetId = 3311165597
-    end
-
-    if targetId then
-        TeleportService:Teleport(targetId, game.Players.LocalPlayer)
-    end
-end)
 
 local function execLog()
     local Players = game:GetService("Players")
