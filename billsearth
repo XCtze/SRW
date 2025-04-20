@@ -5,14 +5,15 @@ local lplr = game.Players.LocalPlayer
 while not lplr.Character do wait() end
 local ldata = game.ReplicatedStorage:WaitForChild("Datas"):WaitForChild(lplr.UserId)
 
--- Now that the player is fully loaded, we can proceed with UI creation
+-- Setup screen GUI
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "LetterBGui"
 screenGui.ResetOnSpawn = false
 screenGui.IgnoreGuiInset = true
 screenGui.Parent = lplr:WaitForChild("PlayerGui")
 
--- Create the Frame
+-- === MAIN TELEPORT BUTTON ===
+
 local frame = Instance.new("Frame")
 frame.Name = "TransparentFrame"
 frame.Size = UDim2.new(0, 44, 0, 44)
@@ -21,7 +22,6 @@ frame.Position = UDim2.new(1, -12, 0, 12)
 frame.BackgroundTransparency = 1
 frame.Parent = screenGui
 
--- Create the TextButton
 local button = Instance.new("TextButton")
 button.Name = "CyanBButton"
 button.Size = UDim2.new(1, 0, 1, 0)
@@ -32,32 +32,66 @@ button.Text = "B"
 button.TextColor3 = Color3.fromRGB(0, 255, 255)
 button.Font = Enum.Font.SourceSansBold
 button.TextScaled = true
+button.TextXAlignment = Enum.TextXAlignment.Center
+button.TextYAlignment = Enum.TextYAlignment.Center
 button.Parent = frame
 
--- Set button text based on PlaceId
+-- Rounded corners
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(0, 8)
+corner.Parent = button
+
+-- Place-specific label
 local placeId = game.PlaceId
 if placeId == 3311165597 then
     button.Text = "B"
 elseif placeId == 5151400895 then
     button.Text = "E"
 else
-    button.Text = "?" -- optional: fallback for unknown places
+    button.Text = "?"
 end
 
--- Add a UICorner for rounded edges
-local corner = Instance.new("UICorner")
-corner.CornerRadius = UDim.new(0, 8)
-corner.Parent = button
-
--- Teleportation logic
+-- Teleport logic
 button.MouseButton1Click:Connect(function()
     local currentPlaceId = game.PlaceId
-
     if currentPlaceId == 5151400895 then
-        -- If the player is in PlaceId 5151400895, teleport them to PlaceId 3311165597
         game:GetService("TeleportService"):Teleport(3311165597, lplr)
     elseif currentPlaceId == 3311165597 then
-        -- If the player is in PlaceId 3311165597, teleport them to PlaceId 5151400895
         game:GetService("TeleportService"):Teleport(5151400895, lplr)
     end
+end)
+
+-- === HIDE USER TOGGLE BUTTON ===
+
+local toggleFrame = Instance.new("Frame")
+toggleFrame.Name = "ToggleHideUserFrame"
+toggleFrame.Size = UDim2.new(0, 44, 0, 44)
+toggleFrame.AnchorPoint = Vector2.new(1, 0)
+toggleFrame.Position = UDim2.new(1, -60, 0, 12) -- 44px left of the teleport button
+toggleFrame.BackgroundTransparency = 1
+toggleFrame.Parent = screenGui
+
+local toggleButton = Instance.new("TextButton")
+toggleButton.Name = "HideUserToggle"
+toggleButton.Size = UDim2.new(1, 0, 1, 0)
+toggleButton.Position = UDim2.new(0, 0, 0, 0)
+toggleButton.BackgroundTransparency = 0.7
+toggleButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+toggleButton.Text = "@"
+toggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+toggleButton.Font = Enum.Font.SourceSansBold
+toggleButton.TextScaled = true
+toggleButton.TextXAlignment = Enum.TextXAlignment.Center
+toggleButton.TextYAlignment = Enum.TextYAlignment.Center
+toggleButton.Parent = toggleFrame
+
+local toggleCorner = Instance.new("UICorner")
+toggleCorner.CornerRadius = UDim.new(0, 8)
+toggleCorner.Parent = toggleButton
+
+-- Toggle hideuser on click
+getgenv().hideuser = getgenv().hideuser or false
+toggleButton.MouseButton1Click:Connect(function()
+    getgenv().hideuser = not getgenv().hideuser
+    toggleButton.BackgroundColor3 = getgenv().hideuser and Color3.fromRGB(30, 30, 30) or Color3.fromRGB(0, 0, 0)
 end)
