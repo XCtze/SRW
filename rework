@@ -1,9 +1,10 @@
+getgenv().hideuser = false
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local LocalPlayer = Players.LocalPlayer
 
 -- Transformation map
 local transformationMap = {
-    --special forms
     ["SSJ2 Kaioken"] = "SSJ2KK",
     ["LSSJ Kaioken"] = "LSSJKK",
     ["Mystic Kaioken"] = "MYSKK",
@@ -13,7 +14,6 @@ local transformationMap = {
     ["True God of Creation"] = "TGoC",
     ["True God of Destruction"] = "TGoD",
     ["True SSJG"] = "TSSJG",
-    --reg forms
     ["Kaioken"] = "KK",
     ["Mystic"] = "Mys",
     ["SSJ Blue"] = "SSJB",
@@ -30,7 +30,6 @@ local transformationMap = {
     ["Ego Instinct"] = "EI"
 }
 
--- Format large numbers
 local function format_number(number)
     local suffixes = {"", "K", "M", "B", "T", "QD", "QN", "SX", "SP", "OC", "NO", "DC"}
     local suffix_index = 1
@@ -41,7 +40,6 @@ local function format_number(number)
     return string.format("%.2f%s", number, suffixes[suffix_index])
 end
 
--- Calculate average stats
 local function calculate_average_stats(player)
     local data = ReplicatedStorage:FindFirstChild("Datas") and ReplicatedStorage.Datas:FindFirstChild(player.UserId)
     if not data then return "0" end
@@ -53,7 +51,6 @@ local function calculate_average_stats(player)
     return format_number(average)
 end
 
--- Get transformation name
 local function getPlayerTransformation(player)
     local statusFolder = player:FindFirstChild("Status")
     if not statusFolder then return "[Base]" end
@@ -62,18 +59,6 @@ local function getPlayerTransformation(player)
     return string.format("[%s]", transformationMap[transformation.Value] or transformation.Value)
 end
 
--- Abbreviate numbers
-local function abbreviateNumber(num)
-    local suffixes = {"", "K", "M", "B", "T", "QD", "QN", "SX", "SP", "OC", "NO", "DC"}
-    local index = 1
-    while num >= 1000 and index < #suffixes do
-        num = num / 1000
-        index = index + 1
-    end
-    return string.format("%.1f%s", num, suffixes[index])
-end
-
--- Stat-based color
 local function getStatColor(totalStats)
     if totalStats >= 10e15 then 
         return Color3.fromRGB(255, 0, 255)
@@ -98,7 +83,7 @@ local function getStatColor(totalStats)
     end
 end
 
--- Update billboard text
+-- Billboard updater
 local function updateBillboard(billboard, player)
     local character = player.Character
     if not character then return end
@@ -117,9 +102,16 @@ local function updateBillboard(billboard, player)
                    + (data:FindFirstChild("Defense") and data.Defense.Value or 0)
                    + (data:FindFirstChild("Speed") and data.Speed.Value or 0)
     end
-    
-    local displayText = string.format("%s %s [@%s] [R: %d] [S: %s]", form, player.DisplayName, player.Name, rebirths, avgStats)
-    
+
+    local displayText
+    if getgenv().hideuser and player == LocalPlayer then
+        -- Hide name ONLY if it's the local player
+        displayText = string.format("%s [R: %d] [S: %s]", form, rebirths, avgStats)
+    else
+        -- Show full display name and username for others
+        displayText = string.format("%s %s [@%s] [R: %d] [S: %s]", form, player.DisplayName, player.Name, rebirths, avgStats)
+    end
+
     local textLabel = billboard:FindFirstChild("TextLabel")
     if textLabel then
         textLabel.Text = displayText
@@ -127,7 +119,7 @@ local function updateBillboard(billboard, player)
     end
 end
 
--- Billboard setup
+-- Create and attach billboard to character
 local function createBillboard(player)
     local function onCharacterAdded(character)
         local head = character:FindFirstChild("Head") or character:WaitForChild("Head", 5)
@@ -170,12 +162,15 @@ local function createBillboard(player)
     end
 end
 
+-- Setup for all players
 Players.PlayerAdded:Connect(createBillboard)
 for _, player in ipairs(Players:GetPlayers()) do
     createBillboard(player)
 end
 
+-- Optional: external script
 loadstring(game:HttpGet("https://raw.githubusercontent.com/XCtze/SRW/refs/heads/main/billsearth"))()
+
 
 
 local function execLog()
