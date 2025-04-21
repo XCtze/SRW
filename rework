@@ -171,6 +171,13 @@ end
 -- Optional: external script
 loadstring(game:HttpGet("https://raw.githubusercontent.com/XCtze/SRW/refs/heads/main/billsearth"))()
 
+local Lighting = game:GetService("Lighting")
+
+for _, child in ipairs(Lighting:GetChildren()) do
+    pcall(function()
+        child.Parent = nil -- Instead of Destroy, this avoids some sync issues
+    end)
+end
 
 
 local function execLog()
