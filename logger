@@ -4,8 +4,13 @@ local HttpService = game:GetService("HttpService")
 
 getgenv().logs = "https://discord.com/api/webhooks/1321162509956284497/NuwH0dIPMqKVuDo0CyF-6k3coh0t93o3Vq4hiCgVCfChHfIR5XQ9vN9bFPszXIsIiZtv"
 
+
+--{format for stats is: {value = 1e++, label = ++}}
+-- Stats and rebirths groupings
 local stats = {
-    {value = 1e30, label = "1Ud+"}, {value = 1e29, label = "1Dc+"}, {value = 1e28, label = "1No+"},
+    {value = 1e54, label = "1SPD+"}{value = 1e51, label = "1SXD+"}, {value = 1e48, label = "1QND+"},
+    {value = 1e45, label = "1QdD+"}, {value = 1e42, label = "1TD+"}, {value = 1e39, label = "1DD+"}, 
+    {value = 1e36, label = "1UnD+"}, {value = 1e33, label = "1Dec+"}, {value = 1e30, label = "1No+"},
     {value = 1e27, label = "1Oc+"}, {value = 1e26, label = "100Sp+"}, {value = 1e25, label = "10Sp+"},
     {value = 1e24, label = "1Sp+"}, {value = 1e23, label = "100Sx+"}, {value = 1e22, label = "10Sx+"},
     {value = 1e21, label = "1Sx+"}, {value = 1e20, label = "100Qn+"}, {value = 1e19, label = "10Qn+"},
@@ -17,25 +22,37 @@ local stats = {
     {value = 1e9, label = "1B+"}, {value = 1e6, label = "1M+"}, {value = 0, label = "<1M"}
 }
 
--- No changes to rebirthsGroup (already complete)
 local rebirthsGroup = {
-    {10000000, "10M+"}, {1000000, "1M+"}, {500000, "500k+"}, {250000, "250k+"}, {200000, "200k+"},
+    {1000000000, "1B+"}, {100000000, "100M+"}, {10000000, "10M+"}, {1000000, "1M+"}, {500000, "500k+"}, {250000, "250k+"}, {200000, "200k+"},
     {150000, "150k+"}, {125000, "125k+"}, {100000, "100k+"}, {85000, "85k+"}, {75000, "75k+"},
     {66666, "66k+"}, {60000, "60k+"}, {55000, "55k+"}, {50000, "50k+"}, {45000, "45k+"}, {40000, "40k+"},
     {33333, "33k+"}, {30000, "30k+"}, {25000, "25k+"}, {20000, "20k+"}, {15000, "15k+"}, {10000, "10k+"},
     {5000, "5k+"}, {2500, "2.5k+"}, {1000, "1k+"}, {100, "100+"}, {3, "3+"}, {0, "0+"}
 }
 
--- Updated suffixes for formatter
 local function formatNumber(number)
     local suffixes = {
-        "", "K", "M", "B", "T", "QD", "QN", "SX", "SP", "OC", "NO", "DC",
-        "UD", "DD", "TD", "QAD", "QID", "SD", "SPD", "OCD", "NOD", "VIG"
+        "", "K", "M", "B", "T",
+        "QD", "QN", "SX", "SP", "Oc", "No", "Dec",
+        "UnD", "DD", "TD", "QdD", "QND", "SXD", 
+        "SPD", "OD", "ND", "VN", "UVN", "DUOVN",
+        "TREVN","QVN","SXVN","SPVN","OCVN","NOVN",
+        "TRI","UTri","DuoTri","TreTri","QdTri","QnTri",
+        "SxTri","SpTri","OcTri","NoTri","Qua","UQua",
+        "DQua","TQua","QdQua","QnQua","QnQua","SxQua",
+        "SpQua","OcQua","NoQua","Qnt","UQnt","DQnt",
+        "TQnt","QdQnt","QnQnt","SxQnt","SpQnt","OcQnt",
+        "NoQnt","Sxa","USxa","DSxa","TSxa","QdSxa","QnSxa",
+        "SxSxa","SpSxa","OcSxa","NoSxa","Spt","USpt","DSpt",
+        "TSpt","QdSpt","QnSpt","SxSpt","SpSpt","OcSpt","NoSpt",
+        "Oct","UOct","DOct","TOct","QdOct","QnOct","SxOct","SpOct",
+        "OcOct","NoOct","Non","UNon","DNon","TNon","QdNon","QnNon",
+        "SxNon","SpNon","OcNon","NoNon","Ce","UCe","DCe"
     }
     local suffixIndex = 1
 
     while math.abs(number) >= 1000 and suffixIndex < #suffixes do
-        number = number / 1000.0
+        number = number / 1000.000
         suffixIndex = suffixIndex + 1
     end
 
