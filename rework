@@ -31,7 +31,10 @@ local transformationMap = {
 }
 
 local function format_number(number)
-    local suffixes = {"", "K", "M", "B", "T", "QD", "QN", "SX", "SP", "OC", "NO", "DC"}
+    local suffixes = {
+        "", "K", "M", "B", "T", "QD", "QN", "SX", "SP", "OC", "NO", "DC",
+        "UnD", "DD", "TD", "QaD", "QiD", "SD", "SpD", "OcD", "NoD", "ViG"
+    }
     local suffix_index = 1
     while math.abs(number) >= 1000 and suffix_index < #suffixes do
         number = number / 1000.0
