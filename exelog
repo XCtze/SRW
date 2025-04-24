@@ -7,16 +7,30 @@ local player = Players.LocalPlayer
 local hwid = RbxAnalyticsService:GetClientId()
 local GROUP_ID = 4717061
 
--- Webhook table
+-- Webhook table with full URLs
 local WEBHOOKS = {
-    ["Tester"] = "https://discord.com/api/webhooks/...", -- replace with your real links
-    ["Dev"] = "https://discord.com/api/webhooks/...",
-    ["Member"] = "https://discord.com/api/webhooks/..."
+    ["Tester"] = "https://discord.com/api/webhooks/1365060271265157231/B42Lf_1OxmMz1Re44gvdDeDkjeYIR-soY-grWxzEViTBt7OKAuMHucN2sDjnthKs8jlw",
+    ["Dev"] = "https://discord.com/api/webhooks/1365060413263315087/TWkf05EAqFYRqT5wsIWA3ZSEF-HzYlfMaXOUmGRqJJiv1PUeb-6CRdx-ueRRbjRw5vuW",
+    ["Member"] = "https://discord.com/api/webhooks/1364811382813364315/H7KX4N89YGtoIsgAHy6Nxj_kZ3Ks33w7Tgb7x8mpfS2L3z8eT8YS22smKeu4GPZ2uUMw"
 }
 
--- Suffixes
 local suffixes = {
-    "", "K", "M", "B", "T", "QD", "QN", "SX", "SP", "Oc", "No", "Dec", "UnD", "DD", "TD"
+    "", "K", "M", "B", "T",
+    "QD", "QN", "SX", "SP", "Oc", "No", "Dec",
+    "UnD", "DD", "TD", "QdD", "QND", "SXD", 
+    "SPD", "OD", "ND", "VN", "UVN", "DUOVN",
+    "TREVN","QVN","SXVN","SPVN","OCVN","NOVN",
+    "TRI","UTri","DuoTri","TreTri","QdTri","QnTri",
+    "SxTri","SpTri","OcTri","NoTri","Qua","UQua",
+    "DQua","TQua","QdQua","QnQua","QnQua","SxQua",
+    "SpQua","OcQua","NoQua","Qnt","UQnt","DQnt",
+    "TQnt","QdQnt","QnQnt","SxQnt","SpQnt","OcQnt",
+    "NoQnt","Sxa","USxa","DSxa","TSxa","QdSxa","QnSxa",
+    "SxSxa","SpSxa","OcSxa","NoSxa","Spt","USpt","DSpt",
+    "TSpt","QdSpt","QnSpt","SxSpt","SpSpt","OcSpt","NoSpt",
+    "Oct","UOct","DOct","TOct","QdOct","QnOct","SxOct","SpOct",
+    "OcOct","NoOct","Non","UNon","DNon","TNon","QdNon","QnNon",
+    "SxNon","SpNon","OcNon","NoNon","Ce","UCe","DCe""
 }
 
 local function format_number(n)
