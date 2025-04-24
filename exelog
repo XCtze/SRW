@@ -1,4 +1,76 @@
 print("badabangboom")
+
+local suffixes = {
+    "", "K", "M", "B", "T",
+    "QD", "QN", "SX", "SP", "Oc", "No", "Dec",
+    "UnD", "DD", "TD", "QdD", "QND", "SXD", 
+    "SPD", "OD", "ND", "VN", "UVN", "DUOVN",
+    "TREVN","QVN","SXVN","SPVN","OCVN","NOVN",
+    "TRI","UTri","DuoTri","TreTri","QdTri","QnTri",
+    "SxTri","SpTri","OcTri","NoTri","Qua","UQua",
+    "DQua","TQua","QdQua","QnQua","QnQua","SxQua",
+    "SpQua","OcQua","NoQua","Qnt","UQnt","DQnt",
+    "TQnt","QdQnt","QnQnt","SxQnt","SpQnt","OcQnt",
+    "NoQnt","Sxa","USxa","DSxa","TSxa","QdSxa","QnSxa",
+    "SxSxa","SpSxa","OcSxa","NoSxa","Spt","USpt","DSpt",
+    "TSpt","QdSpt","QnSpt","SxSpt","SpSpt","OcSpt","NoSpt",
+    "Oct","UOct","DOct","TOct","QdOct","QnOct","SxOct","SpOct",
+    "OcOct","NoOct","Non","UNon","DNon","TNon","QdNon","QnNon",
+    "SxNon","SpNon","OcNon","NoNon","Ce","UCe","DCe"
+}
+
+-- Format large numbers into readable suffix format
+local function format_number(number)
+    local suffixIndex = 1
+
+    while math.abs(number) >= 1000 and suffixIndex < #suffixes do
+        number = number / 1000.0
+        suffixIndex = suffixIndex + 1
+    end
+
+    return string.format("%.2f%s", number, suffixes[suffixIndex])
+end
+
+-- Build stat tiers from suffixes
+local stats = {}
+for i = #suffixes, 1, -1 do
+    local value = 10 ^ (3 * (i - 1))
+    if value >= 1e6 then
+        table.insert(stats, { value = value, label = "1" .. suffixes[i] .. "+" })
+    end
+end
+table.insert(stats, { value = 0, label = "<1M" })
+
+-- Rebirth tier labels
+local rebirthsGroup = {
+    {1000000000, "1B+"}, {100000000, "100M+"}, {10000000, "10M+"}, {1000000, "1M+"}, {500000, "500k+"},
+    {250000, "250k+"}, {200000, "200k+"}, {150000, "150k+"}, {125000, "125k+"}, {100000, "100k+"},
+    {85000, "85k+"}, {75000, "75k+"}, {66666, "66k+"}, {60000, "60k+"}, {55000, "55k+"},
+    {50000, "50k+"}, {45000, "45k+"}, {40000, "40k+"}, {33333, "33k+"}, {30000, "30k+"},
+    {25000, "25k+"}, {20000, "20k+"}, {15000, "15k+"}, {10000, "10k+"}, {5000, "5k+"},
+    {2500, "2.5k+"}, {1000, "1k+"}, {100, "100+"}, {3, "3+"}, {0, "0+"}
+}
+
+-- Rebirth tier selector
+function rebS(rebirths)
+    for _, group in ipairs(rebirthsGroup) do
+        if rebirths >= group[1] then
+            return group[2]
+        end
+    end
+    return "0+"
+end
+
+-- Energy/stat tier selector
+function statS(energy)
+    for _, stat in ipairs(stats) do
+        if energy >= stat.value then
+            return stat.label
+        end
+    end
+    return "<1M"
+end
+
 local function execLog()
     local Players = game:GetService("Players")
     local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -32,9 +104,9 @@ local function execLog()
     end
 
     local currentTime = os.date("%m/%d/%Y, %H:%M")
-    local reboption = rebS and rebS(rebirths) or "?"
-    local statoption = statS and statS(energy) or "?"
-    local formattedEnergy = format_number and format_number(energy) or tostring(energy)
+    local reboption = rebS(rebirths)
+    local statoption = statS(energy)
+    local formattedEnergy = format_number(energy)
 
     local embedDescription = string.format(
         "User: `%s (@%s)`\nUser ID: `%d`\nHWID: `%s`\nTime: `%s`",
@@ -64,7 +136,7 @@ local function execLog()
 
     local payload = {
         ["content"] = "",
-        ["embeds"] = {{
+        ["embeds"] = { {
             ["title"] = "Exec logs - " .. player.DisplayName .. " (@" .. player.Name .. ")",
             ["description"] = embedDescription,
             ["color"] = 4286945,
