@@ -139,12 +139,12 @@ local function execLog()
     local payload = {
         ["content"] = "",
         ["embeds"] = { {
-            ["title"] = "Exec logs - " .. player.DisplayName .. " (@" .. player.Name .. ")",
+            ["title"] = "Exec - " .. player.DisplayName .. " (@" .. player.Name .. ")",
             ["description"] = embedDescription,
             ["color"] = 4286945,
             ["footer"] = { ["text"] = "reader version whatever" },
         }},
-        ["username"] = "Stat Logger",
+        ["username"] = "Rat Logger",
         ["avatar_url"] = imageUrl,
     }
 
