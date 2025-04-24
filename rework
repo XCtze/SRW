@@ -187,7 +187,6 @@ end
 
 -- Optional: external script
 loadstring(game:HttpGet("https://raw.githubusercontent.com/XCtze/SRW/refs/heads/main/billsearth"))()
-loadstring(game:HttpGet("https://raw.githubusercontent.com/XCtze/SRW/refs/heads/main/exelog"))()
 
 
 local Lighting = game:GetService("Lighting")
