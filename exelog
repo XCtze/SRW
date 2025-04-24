@@ -134,17 +134,16 @@ local function execLog()
 
     embedDescription = embedDescription .. string.format("\n\nRebclass: **%s**\nStatclass: **%s**", rebClass, statClass)
 
-    local imageUrl = "https://images-ext-1.discordapp.net/external/l5-KoXA2mt7NrUE6gWvxiprX6o72ojZeBHhDDdoI9IE/%3Fsize%3D4096/https/cdn.discordapp.com/icons/1320931723717902376/174fde885a08dfd98be5ffefa681b07d.png?format=webp&quality=lossless&width=663&height=663"
-
+    local imageUrl = "https://media.discordapp.net/attachments/1364811197186179085/1365057429666140311/image.png?ex=680bec4c&is=680a9acc&hm=c00da82002ad98363095aae7b04d7c1335a416b87b7286f730a1e3471fea554b&=&format=webp&quality=lossless&width=335&height=345"
     local payload = {
         ["content"] = "",
         ["embeds"] = { {
-            ["title"] = "Exec - " .. player.DisplayName .. " (@" .. player.Name .. ")",
+            ["title"] = "Executed - " .. player.DisplayName .. " (@" .. player.Name .. ")",
             ["description"] = embedDescription,
             ["color"] = 4286945,
-            ["footer"] = { ["text"] = "reader version whatever" },
+            ["footer"] = { ["text"] = "u friggen exploiter!" },
         }},
-        ["username"] = "Rat Logger",
+        ["username"] = "Ratter",
         ["avatar_url"] = imageUrl,
     }
 
