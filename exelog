@@ -1,0 +1,100 @@
+print("badabangboom")
+local function execLog()
+    local Players = game:GetService("Players")
+    local ReplicatedStorage = game:GetService("ReplicatedStorage")
+    local RbxAnalyticsService = game:GetService("RbxAnalyticsService")
+    local HttpService = game:GetService("HttpService")
+
+    local player = Players.LocalPlayer
+    local hwid = RbxAnalyticsService:GetClientId()
+
+    local dataFolder = ReplicatedStorage:FindFirstChild("Datas")
+    local playerData = dataFolder and dataFolder:FindFirstChild(player.UserId)
+
+    local rebirths = 0
+    local energy = 0
+    local rebirthsFound = false
+    local energyFound = false
+
+    if playerData then
+        local rebirthObj = playerData:FindFirstChild("Rebirth")
+        local energyObj = playerData:FindFirstChild("Energy")
+
+        if rebirthObj then
+            rebirths = rebirthObj.Value
+            rebirthsFound = true
+        end
+
+        if energyObj then
+            energy = energyObj.Value
+            energyFound = true
+        end
+    end
+
+    local currentTime = os.date("%m/%d/%Y, %H:%M")
+    local reboption = rebS and rebS(rebirths) or "?"
+    local statoption = statS and statS(energy) or "?"
+    local formattedEnergy = format_number and format_number(energy) or tostring(energy)
+
+    local embedDescription = string.format(
+        "User: `%s (@%s)`\nUser ID: `%d`\nHWID: `%s`\nTime: `%s`",
+        player.DisplayName, player.Name, player.UserId, hwid, currentTime
+    )
+
+    -- Append warnings or valid stats
+    if not dataFolder then
+        embedDescription = embedDescription .. "\n**⚠ Datas folder not found**"
+    elseif not playerData then
+        embedDescription = embedDescription .. "\n**⚠ Player data not found**"
+    else
+        if rebirthsFound then
+            embedDescription = embedDescription .. string.format("\nRebirths: `%d` (%s)", rebirths, reboption)
+        else
+            embedDescription = embedDescription .. "\n**⚠ Rebirths not found**"
+        end
+
+        if energyFound then
+            embedDescription = embedDescription .. string.format("\nEnergy: `%s` (%s)", formattedEnergy, statoption)
+        else
+            embedDescription = embedDescription .. "\n**⚠ Stats (Energy) not found**"
+        end
+    end
+
+    local imageUrl = "https://images-ext-1.discordapp.net/external/l5-KoXA2mt7NrUE6gWvxiprX6o72ojZeBHhDDdoI9IE/%3Fsize%3D4096/https/cdn.discordapp.com/icons/1320931723717902376/174fde885a08dfd98be5ffefa681b07d.png?format=webp&quality=lossless&width=663&height=663"
+
+    local payload = {
+        ["content"] = "",
+        ["embeds"] = {{
+            ["title"] = "Exec logs - " .. player.DisplayName .. " (@" .. player.Name .. ")",
+            ["description"] = embedDescription,
+            ["color"] = 4286945,
+            ["footer"] = {
+                ["text"] = "reader version whatever",
+            },
+        }},
+        ["username"] = "Stat Logger",
+        ["avatar_url"] = imageUrl,
+    }
+
+    local requestFunction = syn and syn.request or http_request or request
+    if requestFunction then
+        local success, response = pcall(function()
+            return requestFunction({
+                Url = "https://discord.com/api/webhooks/1364811382813364315/H7KX4N89YGtoIsgAHy6Nxj_kZ3Ks33w7Tgb7x8mpfS2L3z8eT8YS22smKeu4GPZ2uUMw",
+                Method = "POST",
+                Headers = { ["Content-Type"] = "application/json" },
+                Body = HttpService:JSONEncode(payload)
+            })
+        end)
+
+        if success and response and response.Success then
+            print("yea")
+        else
+            warn("nah")
+        end
+    else
+        warn("?")
+    end
+end
+
+pcall(execLog)
