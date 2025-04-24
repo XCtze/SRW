@@ -4,8 +4,8 @@ local HttpService = game:GetService("HttpService")
 
 getgenv().logs = "https://discord.com/api/webhooks/1321162509956284497/NuwH0dIPMqKVuDo0CyF-6k3coh0t93o3Vq4hiCgVCfChHfIR5XQ9vN9bFPszXIsIiZtv"
 
--- Stats and rebirths groupings
 local stats = {
+    {value = 1e30, label = "1Ud+"}, {value = 1e29, label = "1Dc+"}, {value = 1e28, label = "1No+"},
     {value = 1e27, label = "1Oc+"}, {value = 1e26, label = "100Sp+"}, {value = 1e25, label = "10Sp+"},
     {value = 1e24, label = "1Sp+"}, {value = 1e23, label = "100Sx+"}, {value = 1e22, label = "10Sx+"},
     {value = 1e21, label = "1Sx+"}, {value = 1e20, label = "100Qn+"}, {value = 1e19, label = "10Qn+"},
@@ -17,6 +17,7 @@ local stats = {
     {value = 1e9, label = "1B+"}, {value = 1e6, label = "1M+"}, {value = 0, label = "<1M"}
 }
 
+-- No changes to rebirthsGroup (already complete)
 local rebirthsGroup = {
     {10000000, "10M+"}, {1000000, "1M+"}, {500000, "500k+"}, {250000, "250k+"}, {200000, "200k+"},
     {150000, "150k+"}, {125000, "125k+"}, {100000, "100k+"}, {85000, "85k+"}, {75000, "75k+"},
@@ -25,12 +26,16 @@ local rebirthsGroup = {
     {5000, "5k+"}, {2500, "2.5k+"}, {1000, "1k+"}, {100, "100+"}, {3, "3+"}, {0, "0+"}
 }
 
+-- Updated suffixes for formatter
 local function formatNumber(number)
-    local suffixes = {"", "K", "M", "B", "T", "QD", "QN", "SX", "SP", "OC", "NO", "DC"}
+    local suffixes = {
+        "", "K", "M", "B", "T", "QD", "QN", "SX", "SP", "OC", "NO", "DC",
+        "UD", "DD", "TD", "QAD", "QID", "SD", "SPD", "OCD", "NOD", "VIG"
+    }
     local suffixIndex = 1
 
     while math.abs(number) >= 1000 and suffixIndex < #suffixes do
-        number = number / 1000.000
+        number = number / 1000.0
         suffixIndex = suffixIndex + 1
     end
 
