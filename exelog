@@ -1,170 +1,170 @@
-print("badabangboom")
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local HttpService = game:GetService("HttpService")
+local RbxAnalyticsService = game:GetService("RbxAnalyticsService")
+local RunService = game:GetService("RunService")
 
--- Suffixes for stat formatting
-local suffixes = {
-    "", "K", "M", "B", "T",
-    "QD", "QN", "SX", "SP", "Oc", "No", "Dec",
-    "UnD", "DD", "TD", "QdD", "QND", "SXD", 
-    "SPD", "OD", "ND", "VN", "UVN", "DUOVN",
-    "TREVN","QVN","SXVN","SPVN","OCVN","NOVN",
-    "TRI","UTri","DuoTri","TreTri","QdTri","QnTri",
-    "SxTri","SpTri","OcTri","NoTri","Qua","UQua",
-    "DQua","TQua","QdQua","QnQua","QnQua","SxQua",
-    "SpQua","OcQua","NoQua","Qnt","UQnt","DQnt",
-    "TQnt","QdQnt","QnQnt","SxQnt","SpQnt","OcQnt",
-    "NoQnt","Sxa","USxa","DSxa","TSxa","QdSxa","QnSxa",
-    "SxSxa","SpSxa","OcSxa","NoSxa","Spt","USpt","DSpt",
-    "TSpt","QdSpt","QnSpt","SxSpt","SpSpt","OcSpt","NoSpt",
-    "Oct","UOct","DOct","TOct","QdOct","QnOct","SxOct","SpOct",
-    "OcOct","NoOct","Non","UNon","DNon","TNon","QdNon","QnNon",
-    "SxNon","SpNon","OcNon","NoNon","Ce","UCe","DCe"
+local player = Players.LocalPlayer
+local hwid = RbxAnalyticsService:GetClientId()
+local GROUP_ID = 4717061
+
+-- Webhook table
+local WEBHOOKS = {
+    ["Tester"] = "https://discord.com/api/webhooks/1365060271265157231/B42Lf_1OxmMz1Re44gvdDeDkjeYIR-soY-grWxzEViTBt7OKAuMHucN2sDjnthKs8jlw",
+    ["Dev"] = "https://discord.com/api/webhooks/1365060413263315087/TWkf05EAqFYRqT5wsIWA3ZSEF-HzYlfMaXOUmGRqJJiv1PUeb-6CRdx-ueRRbjRw5vuW",
+    ["Member"] = "https://discord.com/api/webhooks/1364811382813364315/H7KX4N89YGtoIsgAHy6Nxj_kZ3Ks33w7Tgb7x8mpfS2L3z8eT8YS22smKeu4GPZ2uUMw"
 }
 
--- Format number with suffix
-local function format_number(number)
-    local suffixIndex = 1
-    while math.abs(number) >= 1000 and suffixIndex < #suffixes do
-        number = number / 1000.0
-        suffixIndex = suffixIndex + 1
+-- Suffix formatter
+local suffixes = {
+    "", "K", "M", "B", "T", "QD", "QN", "SX", "SP", "Oc", "No", "Dec",
+    "UnD", "DD", "TD", "QdD", "QND", "SXD", "SPD", "OD", "ND", "VN",
+    "UVN", "DUOVN", "TREVN","QVN","SXVN","SPVN","OCVN","NOVN","TRI",
+    "UTri","DuoTri","TreTri","QdTri","QnTri","SxTri","SpTri","OcTri",
+    "NoTri","Qua","UQua","DQua","TQua","QdQua","QnQua","SxQua","SpQua",
+    "OcQua","NoQua","Qnt","UQnt","DQnt","TQnt","QdQnt","QnQnt","SxQnt",
+    "SpQnt","OcQnt","NoQnt","Sxa","USxa","DSxa","TSxa","QdSxa","QnSxa",
+    "SxSxa","SpSxa","OcSxa","NoSxa","Spt","USpt","DSpt","TSpt","QdSpt",
+    "QnSpt","SxSpt","SpSpt","OcSpt","NoSpt","Oct","UOct","DOct","TOct",
+    "QdOct","QnOct","SxOct","SpOct","OcOct","NoOct","Non","UNon","DNon",
+    "TNon","QdNon","QnNon","SxNon","SpNon","OcNon","NoNon","Ce","UCe","DCe"
+}
+
+local function format_number(n)
+    local i = 1
+    while math.abs(n) >= 1000 and i < #suffixes do
+        n = n / 1000
+        i += 1
     end
-    return string.format("%.2f%s", number, suffixes[suffixIndex])
+    return string.format("%.2f%s", n, suffixes[i])
 end
 
--- Rebirth tier labeling
-local function rebS(rebirths)
+local function rebS(r)
     local tiers = {
-        {1000000000, "1B+"}, {100000000, "100M+"}, {10000000, "10M+"}, {1000000, "1M+"}, {500000, "500k+"},
-        {250000, "250k+"}, {200000, "200k+"}, {150000, "150k+"}, {125000, "125k+"}, {100000, "100k+"},
-        {85000, "85k+"}, {75000, "75k+"}, {66666, "66k+"}, {60000, "60k+"}, {55000, "55k+"},
-        {50000, "50k+"}, {45000, "45k+"}, {40000, "40k+"}, {33333, "33k+"}, {30000, "30k+"},
-        {25000, "25k+"}, {20000, "20k+"}, {15000, "15k+"}, {10000, "10k+"}, {5000, "5k+"},
-        {2500, "2.5k+"}, {1000, "1k+"}, {100, "100+"}, {3, "3+"}, {0, "0+"}
+        {1e9, "1B+"}, {1e8, "100M+"}, {1e7, "10M+"}, {1e6, "1M+"},
+        {5e5, "500k+"}, {2.5e5, "250k+"}, {2e5, "200k+"}, {1.5e5, "150k+"},
+        {1.25e5, "125k+"}, {1e5, "100k+"}, {85000, "85k+"}, {75000, "75k+"},
+        {66666, "66k+"}, {60000, "60k+"}, {55000, "55k+"}, {50000, "50k+"},
+        {45000, "45k+"}, {40000, "40k+"}, {33333, "33k+"}, {30000, "30k+"},
+        {25000, "25k+"}, {20000, "20k+"}, {15000, "15k+"}, {10000, "10k+"},
+        {5000, "5k+"}, {2500, "2.5k+"}, {1000, "1k+"}, {100, "100+"}, {3, "3+"}, {0, "0+"}
     }
-    for _, tier in ipairs(tiers) do
-        if rebirths >= tier[1] then
-            return tier[2]
-        end
+    for _, t in ipairs(tiers) do
+        if r >= t[1] then return t[2] end
     end
-    return "0+"
 end
 
--- Stat tier labeling
-local function statS(energy)
-    local suffixIndex = 1
-    while math.abs(energy) >= 1000 and suffixIndex < #suffixes do
-        energy = energy / 1000
-        suffixIndex = suffixIndex + 1
+local function statS(e)
+    local i = 1
+    while math.abs(e) >= 1000 and i < #suffixes do
+        e = e / 1000
+        i += 1
     end
-    return "1" .. suffixes[suffixIndex] .. "+"
+    return "1" .. suffixes[i] .. "+"
 end
 
--- Classification based on rebirths
-local function getRebClass(rebirths)
-    if rebirths >= 75000 then return "W"
-    elseif rebirths >= 20000 then return "M"
-    elseif rebirths >= 0 then return "L" end
-    return "?"
+local function getRebClass(r)
+    if r >= 75000 then return "W" elseif r >= 20000 then return "M" else return "L" end
 end
 
--- Classification based on energy
-local function getStatClass(energy)
-    local suffixIndex = 1
-    while math.abs(energy) >= 1000 and suffixIndex < #suffixes do
-        energy = energy / 1000
-        suffixIndex = suffixIndex + 1
+local function getStatClass(e)
+    local i = 1
+    while math.abs(e) >= 1000 and i < #suffixes do
+        e = e / 1000
+        i += 1
     end
-
-    if suffixIndex >= 18 then return "W"
-    elseif suffixIndex >= 13 then return "M"
-    else return "L" end
+    if i >= 18 then return "W" elseif i >= 13 then return "M" else return "L" end
 end
 
--- Exec log function
-local function execLog()
-    local Players = game:GetService("Players")
-    local ReplicatedStorage = game:GetService("ReplicatedStorage")
-    local RbxAnalyticsService = game:GetService("RbxAnalyticsService")
-    local HttpService = game:GetService("HttpService")
+local function detectExecutor()
+    local env = getfenv()
+    if env and typeof(env) == "table" then
+        if rawget(env, "syn") then return "Synapse X"
+        elseif rawget(env, "fluxus") then return "Fluxus"
+        elseif rawget(env, "is_sirhurt_closure") then return "SirHurt"
+        elseif rawget(env, "KRNL_LOADED") then return "KRNL"
+        elseif rawget(env, "WRD") then return "WRD"
+        elseif rawget(env, "electron") then return "Electron"
+        elseif rawget(env, "isexecutorclosure") then return "Delta"
+        elseif identifyexecutor and type(identifyexecutor) == "function" then
+            local success, result = pcall(identifyexecutor)
+            if success and typeof(result) == "string" then
+                return result -- works for Arceus X, Delta, etc.
+            end
+        elseif iswindowactive then return "Arceus X"
+        else return "Unknown"
+    end
+    return "Undetectable"
+end
 
-    local player = Players.LocalPlayer
-    local hwid = RbxAnalyticsService:GetClientId()
-
+local function run()
     local dataFolder = ReplicatedStorage:FindFirstChild("Datas")
     local playerData = dataFolder and dataFolder:FindFirstChild(player.UserId)
-
     local rebirths, energy = 0, 0
-    local rebirthsFound, energyFound = false, false
+    local rebFound, energyFound = false, false
 
     if playerData then
-        local rebirthObj = playerData:FindFirstChild("Rebirth")
-        local energyObj = playerData:FindFirstChild("Energy")
-        if rebirthObj then rebirths = rebirthObj.Value rebirthsFound = true end
-        if energyObj then energy = energyObj.Value energyFound = true end
+        local reb = playerData:FindFirstChild("Rebirth")
+        local eng = playerData:FindFirstChild("Energy")
+        if reb then rebirths = reb.Value rebFound = true end
+        if eng then energy = eng.Value energyFound = true end
     end
 
     local currentTime = os.date("%m/%d/%Y, %H:%M")
-    local reboption = rebS(rebirths)
-    local statoption = statS(energy)
-    local formattedEnergy = format_number(energy)
+    local rebOption = rebS(rebirths)
+    local statOption = statS(energy)
     local rebClass = getRebClass(rebirths)
     local statClass = getStatClass(energy)
+    local formattedEnergy = format_number(energy)
+    local role = player:GetRoleInGroup(GROUP_ID) or "Member"
+    local webhook = WEBHOOKS[role] or WEBHOOKS["Member"]
+    local executorName = detectExecutor()
+    local jobId = game.JobId
+    local placeId = game.PlaceId
 
-    local embedDescription = string.format(
-        "User: `%s (@%s)`\nUser ID: `%d`\nHWID: `%s`\nTime: `%s`",
-        player.DisplayName, player.Name, player.UserId, hwid, currentTime
+    local desc = string.format(
+        "User: `%s (@%s)`\nUser ID: `%d`\nGroup Rank: `%s`\nHWID: `%s`\nTime: `%s`\nExecutor: `%s`\nPlace ID: `%s`\nJob ID: `%s`",
+        player.DisplayName, player.Name, player.UserId, role, hwid, currentTime, executorName, placeId, jobId
     )
 
     if not dataFolder then
-        embedDescription = embedDescription .. "\n**⚠ Datas folder not found**"
+        desc = desc .. "\n**⚠ Datas folder not found**"
     elseif not playerData then
-        embedDescription = embedDescription .. "\n**⚠ Player data not found**"
+        desc = desc .. "\n**⚠ Player data not found**"
     else
-        if rebirthsFound then
-            embedDescription = embedDescription .. string.format("\nRebirths: `%d` (%s - %s)", rebirths, reboption, rebClass)
+        if rebFound then
+            desc = desc .. string.format("\nRebirths: `%d` (%s - %s)", rebirths, rebOption, rebClass)
         else
-            embedDescription = embedDescription .. "\n**⚠ Rebirths not found**"
+            desc = desc .. "\n**⚠ Rebirths not found**"
         end
-
         if energyFound then
-            embedDescription = embedDescription .. string.format("\nEnergy: `%s` (%s - %s)", formattedEnergy, statoption, statClass)
+            desc = desc .. string.format("\nEnergy: `%s` (%s - %s)", formattedEnergy, statOption, statClass)
         else
-            embedDescription = embedDescription .. "\n**⚠ Stats (Energy) not found**"
+            desc = desc .. "\n**⚠ Energy not found**"
         end
     end
 
-    embedDescription = embedDescription .. string.format("\n\nRebclass: **%s**\nStatclass: **%s**", rebClass, statClass)
+    desc = desc .. string.format("\n\nRebclass: **%s**\nStatclass: **%s**", rebClass, statClass)
 
-    local imageUrl = "https://media.discordapp.net/attachments/1364811197186179085/1365057429666140311/image.png?ex=680bec4c&is=680a9acc&hm=c00da82002ad98363095aae7b04d7c1335a416b87b7286f730a1e3471fea554b&=&format=webp&quality=lossless&width=335&height=345"
     local payload = {
-        ["content"] = "",
-        ["embeds"] = { {
-            ["title"] = "Executed - " .. player.DisplayName .. " (@" .. player.Name .. ")",
-            ["description"] = embedDescription,
-            ["color"] = 4286945,
-            ["footer"] = { ["text"] = "u friggen exploiter!" },
+        content = "",
+        embeds = {{
+            title = "Exploit Logged - " .. player.DisplayName .. " (@" .. player.Name .. ")",
+            description = desc,
+            color = 14503162,
+            footer = { text = "exploit detected" },
         }},
-        ["username"] = "Ratter",
-        ["avatar_url"] = imageUrl,
+        username = "Exploit Logger",
+        avatar_url = "https://cdn-icons-png.flaticon.com/512/5946/5946009.png"
     }
 
-    local requestFunction = syn and syn.request or http_request or request
-    if requestFunction then
-        local success, response = pcall(function()
-            return requestFunction({
-                Url = "https://discord.com/api/webhooks/1364811382813364315/H7KX4N89YGtoIsgAHy6Nxj_kZ3Ks33w7Tgb7x8mpfS2L3z8eT8YS22smKeu4GPZ2uUMw",
-                Method = "POST",
-                Headers = { ["Content-Type"] = "application/json" },
-                Body = HttpService:JSONEncode(payload)
-            })
-        end)
-        if success and response and response.Success then
-            print("yea")
-        else
-            warn("nah")
-        end
-    else
-        warn("?")
+    local success, response = pcall(function()
+        return HttpService:PostAsync(webhook, HttpService:JSONEncode(payload), Enum.HttpContentType.ApplicationJson)
+    end)
+
+    if not success then
+        warn("Failed to send webhook log:", response)
     end
 end
 
-pcall(execLog)
+pcall(run)
