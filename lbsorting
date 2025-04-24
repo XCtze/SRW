@@ -1,1 +1,46 @@
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Workspace = game:GetService("Workspace")
+
+local function format_number(number)
+    local suffixes = {
+        "", "K", "M", "B", "T",
+        "QD", "QN", "SX", "SP", "Oc", "No", "Dec",
+        "UnD", "DD", "TD", "QdD", "QND", "SXD", 
+        "SPD", "OD", "ND", "VN", "UVN", "DUOVN",
+        "TREVN","QVN","SXVN","SPVN","OCVN","NOVN",
+        "TRI","UTri","DuoTri","TreTri","QdTri","QnTri",
+        "SxTri","SpTri","OcTri","NoTri","Qua","UQua",
+        "DQua","TQua","QdQua","QnQua","QnQua","SxQua",
+        "SpQua","OcQua","NoQua","Qnt","UQnt","DQnt",
+        "TQnt","QdQnt","QnQnt","SxQnt","SpQnt","OcQnt",
+        "NoQnt","Sxa","USxa","DSxa","TSxa","QdSxa","QnSxa",
+        "SxSxa","SpSxa","OcSxa","NoSxa","Spt","USpt","DSpt",
+        "TSpt","QdSpt","QnSpt","SxSpt","SpSpt","OcSpt","NoSpt",
+        "Oct","UOct","DOct","TOct","QdOct","QnOct","SxOct","SpOct",
+        "OcOct","NoOct","Non","UNon","DNon","TNon","QdNon","QnNon",
+        "SxNon","SpNon","OcNon","NoNon","Ce","UCe","DCe"
+    }
+    local suffix_index = 1
+
+    while math.abs(number) >= 1000 and suffix_index < #suffixes do
+        number = number / 1000.000
+        suffix_index = suffix_index + 1
+    end
+
+    return string.format("%.2f%s", number, suffixes[suffix_index])
+end
+
+local function calculate_average_stats(player)
+    local data = ReplicatedStorage:FindFirstChild("Datas") and ReplicatedStorage.Datas:FindFirstChild(player.UserId)
+    if not data then return "0" end
+
+    local strength = data:FindFirstChild("Strength") and data.Strength.Value or 0
+    local energy = data:FindFirstChild("Energy") and data.Energy.Value or 0
+    local defense = data:FindFirstChild("Defense") and data.Defense.Value or 0
+    local speed = data:FindFirstChild("Speed") and data.Speed.Value or 0
+
+    local average = (strength + energy + defense + speed) / 4
+    return format_number(average)
+end
 
