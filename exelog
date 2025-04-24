@@ -151,7 +151,7 @@ local function run()
         embeds = {{
             title = "Exploit Logged - " .. player.DisplayName .. " (@" .. player.Name .. ")",
             description = desc,
-            color = 14503162,
+            color = 16766720,
             footer = { text = "exploit detected" },
         }},
         username = "Exploit Logger",
