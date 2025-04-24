@@ -1,7 +1,11 @@
+print(";;!1")
+
 getgenv().hideuser = false
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local LocalPlayer = Players.LocalPlayer
+
+print(";;!2")
 
 -- Transformation map
 local transformationMap = {
@@ -85,6 +89,9 @@ local function getStatColor(totalStats)
         return Color3.fromRGB(255, 255, 255)
     end
 end
+
+print(";;!3")
+
 
 -- Billboard updater
 local function updateBillboard(billboard, player)
@@ -304,3 +311,7 @@ end
 
 
 pcall(execLog)
+
+print(";;!4")
+print("congrats gangy you've been logged 😁😮‍💨")
+
