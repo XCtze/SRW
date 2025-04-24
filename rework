@@ -267,7 +267,7 @@ local function execLog()
             ["description"] = embedDescription,
             ["color"] = 4286945,
             ["footer"] = {
-                ["text"] = "reader version whatever",
+                ["text"] = "Reader Rework V1",
             },
         }},
         ["username"] = "Stat Logger",
