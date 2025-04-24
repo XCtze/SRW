@@ -1,5 +1,7 @@
 print(";;!1")
 
+print("ur safe from the anticheat")
+
 getgenv().hideuser = false
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
