@@ -76,27 +76,6 @@ local function getStatClass(e)
     if i >= 18 then return "W" elseif i >= 13 then return "M" else return "L" end
 end
 
-local function detectExecutor()
-    local env = getfenv()
-    if env and typeof(env) == "table" then
-        if rawget(env, "syn") then return "Synapse X"
-        elseif rawget(env, "fluxus") then return "Fluxus"
-        elseif rawget(env, "is_sirhurt_closure") then return "SirHurt"
-        elseif rawget(env, "KRNL_LOADED") then return "KRNL"
-        elseif rawget(env, "WRD") then return "WRD"
-        elseif rawget(env, "electron") then return "Electron"
-        elseif rawget(env, "isexecutorclosure") then return "Delta"
-        elseif identifyexecutor and type(identifyexecutor) == "function" then
-            local success, result = pcall(identifyexecutor)
-            if success and typeof(result) == "string" then
-                return result -- works for Arceus X, Delta, etc.
-            end
-        elseif iswindowactive then return "Arceus X"
-        else return "Unknown"
-    end
-    return "Undetectable"
-end
-
 local function run()
     local dataFolder = ReplicatedStorage:FindFirstChild("Datas")
     local playerData = dataFolder and dataFolder:FindFirstChild(player.UserId)
@@ -118,7 +97,6 @@ local function run()
     local formattedEnergy = format_number(energy)
     local role = player:GetRoleInGroup(GROUP_ID) or "Member"
     local webhook = WEBHOOKS[role] or WEBHOOKS["Member"]
-    local executorName = detectExecutor()
     local jobId = game.JobId
     local placeId = game.PlaceId
 
