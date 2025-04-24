@@ -5,8 +5,22 @@ local Workspace = game:GetService("Workspace")
 -- Function to format numbers with suffixes
 local function format_number(number)
     local suffixes = {
-        "", "K", "M", "B", "T", "QD", "QN", "SX", "SP", "OC", "NO", "DC",
-        "UnD", "DD", "TD", "QaD", "QiD", "SD", "SpD", "OcD", "NoD", "ViG"
+        "", "K", "M", "B", "T",
+        "QD", "QN", "SX", "SP", "Oc", "No", "Dec",
+        "UnD", "DD", "TD", "QdD", "QND", "SXD", 
+        "SPD", "OD", "ND", "VN", "UVN", "DUOVN",
+        "TREVN","QVN","SXVN","SPVN","OCVN","NOVN",
+        "TRI","UTri","DuoTri","TreTri","QdTri","QnTri",
+        "SxTri","SpTri","OcTri","NoTri","Qua","UQua",
+        "DQua","TQua","QdQua","QnQua","QnQua","SxQua",
+        "SpQua","OcQua","NoQua","Qnt","UQnt","DQnt",
+        "TQnt","QdQnt","QnQnt","SxQnt","SpQnt","OcQnt",
+        "NoQnt","Sxa","USxa","DSxa","TSxa","QdSxa","QnSxa",
+        "SxSxa","SpSxa","OcSxa","NoSxa","Spt","USpt","DSpt",
+        "TSpt","QdSpt","QnSpt","SxSpt","SpSpt","OcSpt","NoSpt",
+        "Oct","UOct","DOct","TOct","QdOct","QnOct","SxOct","SpOct",
+        "OcOct","NoOct","Non","UNon","DNon","TNon","QdNon","QnNon",
+        "SxNon","SpNon","OcNon","NoNon","Ce","UCe","DCe"
     }
     local suffix_index = 1
 
