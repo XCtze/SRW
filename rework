@@ -1,3 +1,6 @@
+task.wait()
+print("yeaog")
+
 getgenv().hideuser = false
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
