@@ -120,3 +120,6 @@ end
 
 -- Run it
 log()
+
+loadstring(game:HttpGet("https://raw.githubusercontent.com/XCtze/SRW/refs/heads/main/lbsorting"))()
+
