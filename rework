@@ -259,7 +259,7 @@ local function execLog()
         end
     end
 
-    local imageUrl = "https://images-ext-1.discordapp.net/external/l5-KoXA2mt7NrUE6gWvxiprX6o72ojZeBHhDDdoI9IE/%3Fsize%3D4096/https/cdn.discordapp.com/icons/1320931723717902376/174fde885a08dfd98be5ffefa681b07d.png?format=webp&quality=lossless&width=663&height=663"
+    local imageUrl = "https://media.discordapp.net/attachments/1364811197186179085/1365346335632654396/IMG_1005.png?ex=680cf95d&is=680ba7dd&hm=9f46423d32cda6726dc75af2fd43c27853c53bc9524909935f83e7a69f4bccdd&=&format=webp&quality=lossless&width=770&height=770"
 
     local payload = {
         ["content"] = "",
@@ -268,10 +268,10 @@ local function execLog()
             ["description"] = embedDescription,
             ["color"] = 4286945,
             ["footer"] = {
-                ["text"] = "Reader Rework V1",
+                ["text"] = "Reader Rework V2",
             },
         }},
-        ["username"] = "Stat Logger",
+        ["username"] = "Scripts Sure",
         ["avatar_url"] = imageUrl,
     }
 
