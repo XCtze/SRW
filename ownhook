@@ -1,0 +1,4 @@
+-- put in your webhook url where it says "url goes here"
+
+getgenv().readerhook = "url goes here"
+
